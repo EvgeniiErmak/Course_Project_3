@@ -1,17 +1,15 @@
-# main.py
 import json
-from datetime import datetime
-from utils import filter_and_sorted, prepare_message, final_mask
+from utils import filter_and_sorted, get_date, mask_account_num, mask_card_num, final_mask
 
-# Чтение данных из operations.json
-with open('operations.json', 'r', encoding='utf-8') as file:
-    operations = json.load(file)
+with open("operations.json", "r", encoding="utf-8") as file:
+    all_information = json.load(file)
 
-# Фильтрация и сортировка операций
-sorted_operations = filter_and_sorted(operations)
-
-# Вывод последних 5 операций
-for operation in sorted_operations[:5]:
-    message = prepare_message(operation)
-    masked_message = final_mask(message)
-    print(masked_message + '\n')
+for i in range(5):
+    inform_filter = filter_and_sorted(all_information)[i]
+    print(get_date(inform_filter["date"]), inform_filter["description"])
+    if "from" in inform_filter:
+        print(f"""{final_mask(inform_filter["from"])} -> {mask_account_num(inform_filter["to"])}""")
+    else:
+        print(f"""Перевод на {mask_account_num(inform_filter["to"])} """)
+    print(inform_filter["operationAmount"]["amount"], inform_filter["operationAmount"]["currency"]["name"])
+    print()
